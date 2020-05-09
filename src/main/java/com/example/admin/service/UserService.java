@@ -1,6 +1,6 @@
 package com.example.admin.service;
 
-import com.example.admin.dto.UserDto;
+import com.example.admin.dto.UserDTO;
 import com.example.admin.entity.User;
 import com.example.admin.mapper.UserMapper;
 import com.example.admin.repository.UserRepository;
@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public UserDto create(User user) {
+    public UserDTO create(User user) {
         if (null != userRepository.findByUsername(user.getUsername(), User.class)) {
             throw new RuntimeException("用户名已存在");
         }

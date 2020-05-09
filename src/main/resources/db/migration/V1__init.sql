@@ -15,12 +15,13 @@ CREATE TABLE `user` (
 CREATE TABLE `role` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,
+  `authority` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `role` VALUES (1, '超级管理员');
-INSERT INTO `role` VALUES (2, '管理员');
-INSERT INTO `role` VALUES (3, '用户');
+INSERT INTO `role` VALUES (1, '超级管理员', 'super-admin');
+INSERT INTO `role` VALUES (2, '管理员', 'admin');
+INSERT INTO `role` VALUES (3, '用户', 'user');
 
 CREATE TABLE `user_role` (
   `user_id` int(10) unsigned NOT NULL,

@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/menus")
@@ -25,7 +28,18 @@ public class MenuController {
     @GetMapping
     public Page<MenuVO> index(Pageable pageable) {
         Page<Menu> page = menuRepository.findAllByOrderByIdDesc(pageable);
-        return page.map(menuMapper::toDto);
+        return page.map(menu -> {
+            MenuVO menuVO = new MenuVO();
+            BeanUtils.copyProperties(menu, menuVO);
+            if (!menu.getPid().equals(0L)) {
+                MenuVO menuVO1 = menuMapper.toDto(menuRepository.findById(menu.getPid()).get());
+                HashMap<String, Object> parent = new HashMap<>();
+                parent.put("id", menuVO1.getId());
+                parent.put("name", menuVO1.getName());
+                menuVO.setParent(parent);
+            }
+            return menuVO;
+        });
     }
 
     @PostMapping
@@ -34,5 +48,18 @@ public class MenuController {
         MenuVO menusVO = new MenuVO();
         BeanUtils.copyProperties(menuRepository.save(menu), menusVO);
         return menusVO;
+    }
+
+    @PutMapping("/{id}")
+    public Menu update(@PathVariable Long id, @Valid @RequestBody Menu menu) {
+        menu.setId(id);
+        System.out.println(menu);
+        return menuRepository.save(menu);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        menuRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -16,8 +16,8 @@ public class RoleController {
     @Autowired
     private RoleRepository roleRepository;
 
-    @GetMapping
-    public Page<RoleProjection> index(@RequestParam(defaultValue = "0") int page) {
-        return roleRepository.findAllProjectedBy(PageRequest.of(page, 20));
-    }
+//    @GetMapping
+//    public Page<RoleProjection> index(@RequestParam(defaultValue = "0") int page) {
+//        return roleRepository.findAllProjectedBy(PageRequest.of(page, 20));
+//    }
 }

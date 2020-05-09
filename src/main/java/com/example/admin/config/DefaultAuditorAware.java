@@ -19,6 +19,7 @@ public class DefaultAuditorAware implements AuditorAware<Long> {
             return Optional.empty();
         }
         System.out.println(authentication);
-        return Optional.of(((User) authentication.getPrincipal()).getId());
+//        return Optional.of(((User) authentication.getPrincipal()).getId());
+        return Optional.of(1L);
     }
 }

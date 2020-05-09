@@ -25,6 +25,8 @@ public class Role implements GrantedAuthority {
     @NotNull
     private String name;
 
+    private String authority;
+
     @ManyToMany
     @JoinTable(name = "role_menu",
             joinColumns = {@JoinColumn(name = "role_id")},
@@ -34,9 +36,4 @@ public class Role implements GrantedAuthority {
 
     @ManyToMany(mappedBy = "authorities")
     private Set<User> users;
-
-    @Override
-    public String getAuthority() {
-        return name;
-    }
 }
