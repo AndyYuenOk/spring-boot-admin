@@ -1,27 +1,24 @@
 package com.example.admin.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"menus", "users"})
+@EqualsAndHashCode(exclude = {"menus", "users"}, callSuper = true)
 @ToString(exclude = {"menus", "users"})
 @JsonIgnoreProperties({"menus", "users"})
-public class Role implements GrantedAuthority {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Role extends BaseEntity implements GrantedAuthority {
     @NotNull
     private String name;
 

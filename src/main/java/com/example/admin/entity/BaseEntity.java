@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(groups = Update.class)
+    @NotNull
     private Long id;
 
     @Column(name = "created_date")
@@ -36,9 +37,9 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-    public @interface Create {
+    public interface Create {
     }
 
-    public @interface Update {
+    public interface Update {
     }
 }

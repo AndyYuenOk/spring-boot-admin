@@ -6,17 +6,18 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 import java.io.Serializable;
 import java.util.Set;
 
 @Data
 public class UserDTO implements Serializable {
-    @NotBlank
-    @Size(min = 2, max = 10)
+    @NotBlank(groups = {Default.class, BaseEntity.Update.class})
+    @Size(min = 2, max = 10, groups = {Default.class, BaseEntity.Update.class})
     private String username;
 
-    @NotBlank(groups = BaseEntity.Create.class)
-    @Size(min = 6)
+    @NotBlank
+    @Size(min = 6, max = 20, groups = {Default.class, BaseEntity.Update.class})
     private String password;
 
     @JsonSetter("role_ids")

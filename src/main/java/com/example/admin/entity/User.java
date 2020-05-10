@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"authorities"}, callSuper = true)
+@EqualsAndHashCode(of = {"username"}, callSuper = false)
 public class User extends BaseEntity implements UserDetails, Serializable {
 
     @AllArgsConstructor
@@ -41,12 +41,11 @@ public class User extends BaseEntity implements UserDetails, Serializable {
     @Size(min = 2, max = 10)
     private String username;
 
-    @NotNull
     private String password;
 
     private String nickname;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private SexEnum sex;
 
     @ManyToMany

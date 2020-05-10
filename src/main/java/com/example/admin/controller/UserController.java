@@ -4,29 +4,39 @@ import com.example.admin.dto.UserDTO;
 import com.example.admin.entity.BaseEntity;
 import com.example.admin.entity.Role;
 import com.example.admin.entity.User;
+import com.example.admin.exception.FieldException;
 import com.example.admin.repository.RoleRepository;
 import com.example.admin.repository.UserRepository;
 import com.example.admin.service.UserService;
 import com.example.admin.util.PaginationUtil;
 import com.example.admin.vo.UserVO;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.constraintvalidators.bv.NotBlankValidator;
+import org.hibernate.validator.internal.constraintvalidators.bv.size.SizeValidatorForCharSequence;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
+import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Api(tags = "用户控制器")
 @RestController
@@ -40,16 +50,14 @@ public class UserController {
 
     @ApiOperation("用户列表")
     @GetMapping
-    public ResponseEntity<?> index(Pageable pageable) throws NoSuchFieldException {
+    public ResponseEntity<?> index(Pageable pageable) {
         Page<User> page = userRepository.findAllByOrderByIdDesc(pageable);
-        Field id = UserVO.class.getDeclaredField("id");
-        System.out.println(id.getAnnotation(ApiModelProperty.class).value());
-        return new ResponseEntity<>(PaginationUtil.toPagination(page, UserVO.class), HttpStatus.OK);
+        return new ResponseEntity<>(PaginationUtil.toPaginationWithColumns(page, UserVO.class), HttpStatus.OK);
     }
 
     @ApiOperation("创建用户")
     @PostMapping
-    public UserDTO create(@Validated({BaseEntity.Create.class}) @RequestBody UserDTO userDTO) {
+    public Object create(@Validated @RequestBody UserDTO userDTO) {
         User user = new User();
         BeanUtils.copyProperties(userDTO, user);
 
@@ -61,12 +69,15 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
+    public User update(@PathVariable Long id, @Validated({BaseEntity.Update.class}) @RequestBody UserDTO userDTO) {
         User user = new User();
         user.setId(id);
         BeanUtils.copyProperties(userDTO, user);
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
         setAuthorities(userDTO, user);
 
         System.out.println(user);

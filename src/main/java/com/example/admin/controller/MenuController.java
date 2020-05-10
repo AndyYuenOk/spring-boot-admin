@@ -1,10 +1,13 @@
 package com.example.admin.controller;
 
 import com.example.admin.entity.Menu;
+import com.example.admin.entity.User;
 import com.example.admin.mapper.MenuMapper;
 import com.example.admin.mapper.UserMapper;
 import com.example.admin.repository.MenuRepository;
+import com.example.admin.util.PaginationUtil;
 import com.example.admin.vo.MenuVO;
+import com.example.admin.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,9 +29,10 @@ public class MenuController {
     private MenuMapper menuMapper;
 
     @GetMapping
-    public Page<MenuVO> index(Pageable pageable) {
+    public ResponseEntity<?> index(Pageable pageable) {
         Page<Menu> page = menuRepository.findAllByOrderByIdDesc(pageable);
-        return page.map(menu -> {
+
+        Page<MenuVO> map = page.map(menu -> {
             MenuVO menuVO = new MenuVO();
             BeanUtils.copyProperties(menu, menuVO);
             if (!menu.getPid().equals(0L)) {
@@ -40,6 +44,8 @@ public class MenuController {
             }
             return menuVO;
         });
+
+        return new ResponseEntity<>(PaginationUtil.toPaginationWithColumns(map, MenuVO.class), HttpStatus.OK);
     }
 
     @PostMapping

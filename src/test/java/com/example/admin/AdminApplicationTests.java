@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Random;
 
 @SpringBootTest
 class AdminApplicationTests {
@@ -39,13 +40,16 @@ class AdminApplicationTests {
         User user = new User();
         user.setUsername("admin");
         user.setPassword(password);
+        user.setSex(User.SexEnum.MALE);
         user.setCreatedBy(0L);
         users.add(user);
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 99; i++) {
             user = new User();
             user.setUsername(faker.name().fullName());
             user.setPassword(password);
+            User.SexEnum[] enums = User.SexEnum.values();
+            user.setSex(enums[new Random().nextInt(enums.length)]);
             user.setCreatedBy(0L);
             users.add(user);
         }
