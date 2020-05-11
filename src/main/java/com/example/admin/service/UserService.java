@@ -2,6 +2,7 @@ package com.example.admin.service;
 
 import com.example.admin.dto.UserDTO;
 import com.example.admin.entity.User;
+import com.example.admin.exception.FieldException;
 import com.example.admin.mapper.UserMapper;
 import com.example.admin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +30,9 @@ public class UserService implements UserDetailsService {
 
     public UserDTO create(User user) {
         if (null != userRepository.findByUsername(user.getUsername(), User.class)) {
-            throw new RuntimeException("用户名已存在");
+            throw new FieldException(new HashMap<String, Object>() {{
+                put("username", "用户名已存在");
+            }});
         }
         return userMapper.toDto(userRepository.save(user));
     }

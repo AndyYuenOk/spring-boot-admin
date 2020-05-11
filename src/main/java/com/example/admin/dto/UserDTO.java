@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 import java.io.Serializable;
@@ -21,5 +22,6 @@ public class UserDTO implements Serializable {
     private String password;
 
     @JsonSetter("role_ids")
+    @NotNull
     private Set<Long> roleIds;
 }

@@ -18,8 +18,7 @@ import java.util.Set;
 @Entity
 @Data
 @EqualsAndHashCode(of = {"username"}, callSuper = false)
-public class User extends BaseEntity implements UserDetails, Serializable {
-
+public class User extends BaseEntity implements UserDetails {
     @AllArgsConstructor
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum SexEnum {

@@ -25,7 +25,7 @@ public class PaginationUtil {
     }
 
     public static Map<String, Object> toPagination(Page<?> page, Class<?> clazz) {
-        if (!page.getContent().get(0).getClass().getName().equals(clazz.getName())) {
+        if (!page.getContent().isEmpty() && !page.getContent().get(0).getClass().getName().equals(clazz.getName())) {
             Page<?> objectPage = page.map(entity -> {
                 try {
                     Object target = clazz.getDeclaredConstructor().newInstance();

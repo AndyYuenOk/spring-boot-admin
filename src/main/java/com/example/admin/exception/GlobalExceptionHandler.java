@@ -31,7 +31,10 @@ public class GlobalExceptionHandler {
 
         HashMap<String, String> errors = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(fieldError -> {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+            errors.put(
+                    fieldError.getField().replaceAll("[A-Z]", "_$0").toLowerCase(),
+                    fieldError.getDefaultMessage()
+            );
         });
 
         HashMap<String, Object> content = new HashMap<>();
@@ -47,7 +50,7 @@ public class GlobalExceptionHandler {
 //        log.error("", e);
 
         HashMap<String, Object> content = new HashMap<>();
-        content.put("message", "参数错误");
+        content.put("message", e.getMessage());
         content.put("errors", e.getErrors());
 
         return new ResponseEntity<>(content, HttpStatus.BAD_REQUEST);
