@@ -1,6 +1,7 @@
 package com.example.admin.dto;
 
 import com.example.admin.entity.BaseEntity;
+import com.example.admin.entity.User;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 
@@ -20,6 +21,8 @@ public class UserDTO implements Serializable {
     @NotBlank
     @Size(min = 6, max = 20, groups = {Default.class, BaseEntity.Update.class})
     private String password;
+
+    private User.SexEnum sex;
 
     @JsonSetter("role_ids")
     @NotNull
