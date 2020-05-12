@@ -130,6 +130,15 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>6.4.1</version>
+                <configuration>
+                    <url>jdbc:mysql://localhost/spring_boot_admin?serverTimezone=GMT%2B8&amp;zeroDateTimeBehavior=convertToNull</url>
+                    <user>root</user>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
