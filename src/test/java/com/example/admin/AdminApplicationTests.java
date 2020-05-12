@@ -10,9 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 @SpringBootTest
 class AdminApplicationTests {
@@ -35,7 +33,7 @@ class AdminApplicationTests {
 
         Faker faker = new Faker(new Locale("zh-CN"));
         String password = new BCryptPasswordEncoder().encode("123456");
-        ArrayList<User> users = new ArrayList<>();
+        Set<User> users = new LinkedHashSet<>();
 
         User user = new User();
         user.setUsername("admin");
