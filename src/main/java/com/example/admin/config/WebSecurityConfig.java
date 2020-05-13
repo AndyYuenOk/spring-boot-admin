@@ -48,31 +48,37 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //@formatter:off
         http
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
-                .csrf().disable()
-                .exceptionHandling(exceptionHandling -> {
-                    exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-                })
-                .authorizeRequests()
-                .anyRequest().authenticated()
-                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
-                    @Override
-                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
-                        o.setSecurityMetadataSource(new DefaultFilterInvocationSecurityMetadataSource(o.getSecurityMetadataSource(), menuService));
-                        return o;
-                    }
-                })
-                .accessDecisionManager(new AffirmativeBased(Collections.singletonList(new RoleVoter())))
-                .and()
-                .addFilterAt(new JsonAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                .formLogin(formLogin -> {
-                    formLogin.failureHandler(new SimpleUrlAuthenticationFailureHandler("/erorr"));
-                });
+            .csrf().disable()
+            .exceptionHandling(exceptionHandling -> {
+                exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+            })
+            .authorizeRequests(authorizeRequests -> {
+                authorizeRequests
+                    .anyRequest()
+                    .authenticated()
+                    .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                        @Override
+                        public <O extends FilterSecurityInterceptor> O postProcess(O o) {
+                            o.setSecurityMetadataSource(new DefaultFilterInvocationSecurityMetadataSource(o.getSecurityMetadataSource(), menuService));
+                            return o;
+                        }
+                    })
+                    .accessDecisionManager(new AffirmativeBased(Collections.singletonList(new RoleVoter())));
+            })
+            .formLogin(formLogin -> {
+                formLogin.failureHandler(new SimpleUrlAuthenticationFailureHandler("/erorr"));
+            })
+            .logout(logout -> {
+                logout.logoutSuccessUrl("/");
+            })
+            .addFilterAt(new JsonAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
 //                .and()
 //                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil))
 //                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository, roleRepository));
-
+        //@formatter:on
     }
 
     @Override
