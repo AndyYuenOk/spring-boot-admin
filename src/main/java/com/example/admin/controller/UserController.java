@@ -43,7 +43,7 @@ public class UserController {
 
     @ApiOperation("创建用户")
     @PostMapping
-    public Object create(@Validated @RequestBody UserDTO userDTO) {
+    public UserVO create(@Validated @RequestBody UserDTO userDTO) {
         User user = new User();
         BeanUtils.copyProperties(userDTO, user);
 
@@ -51,7 +51,10 @@ public class UserController {
         setAuthorities(userDTO, user);
         System.out.println(user);
 
-        return userService.create(user);
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(userService.create(user), userVO);
+
+        return userVO;
     }
 
 //    @GetMapping("/{id}")

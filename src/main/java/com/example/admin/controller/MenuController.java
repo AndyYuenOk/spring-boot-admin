@@ -1,17 +1,13 @@
 package com.example.admin.controller;
 
 import com.example.admin.entity.Menu;
-import com.example.admin.entity.User;
-import com.example.admin.mapper.MenuMapper;
-import com.example.admin.mapper.UserMapper;
 import com.example.admin.repository.MenuRepository;
+import com.example.admin.service.MenuService;
 import com.example.admin.util.PaginationUtil;
 import com.example.admin.vo.MenuVO;
-import com.example.admin.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +22,7 @@ public class MenuController {
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private MenuMapper menuMapper;
+    private MenuService menuService;
 
     @GetMapping
     public ResponseEntity<?> index(Pageable pageable) {
@@ -36,11 +32,13 @@ public class MenuController {
             MenuVO menuVO = new MenuVO();
             BeanUtils.copyProperties(menu, menuVO);
             if (!menu.getPid().equals(0L)) {
-                MenuVO menuVO1 = menuMapper.toDto(menuRepository.findById(menu.getPid()).get());
-                HashMap<String, Object> parent = new HashMap<>();
-                parent.put("id", menuVO1.getId());
-                parent.put("name", menuVO1.getName());
-                menuVO.setParent(parent);
+                Menu menu1 = menuRepository.findById(menu.getPid()).orElse(null);
+                if (menu1 != null) {
+                    HashMap<String, Object> parent = new HashMap<>();
+                    parent.put("id", menu1.getId());
+                    parent.put("name", menu1.getName());
+                    menuVO.setParent(parent);
+                }
             }
             return menuVO;
         });
@@ -59,8 +57,7 @@ public class MenuController {
     @PutMapping("/{id}")
     public Menu update(@PathVariable Long id, @Valid @RequestBody Menu menu) {
         menu.setId(id);
-        System.out.println(menu);
-        return menuRepository.save(menu);
+        return menuService.update(menu);
     }
 
     @DeleteMapping("/{id}")

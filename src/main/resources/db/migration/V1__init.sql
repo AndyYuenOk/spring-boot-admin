@@ -60,13 +60,15 @@ CREATE TABLE `menu`
   DEFAULT CHARSET = utf8mb4;
 
 INSERT INTO `menu`
-VALUES (1, 0, 1, '用户管理', 'users', '/users', 'supervisor_account', 0);
+VALUES (null, 0, 1, '系统首页', 'dashboard', '/dashboard', 'dashboard', 0);
 INSERT INTO `menu`
-VALUES (2, 0, 1, '角色管理', 'roles', '/roles', 'person', 0);
+VALUES (null, 0, 1, '用户管理', 'users', '/users', 'supervisor_account', 0);
 INSERT INTO `menu`
-VALUES (3, 0, 1, '菜单管理', 'menus', '/menus', 'menu', 0);
+VALUES (null, 0, 1, '角色管理', 'roles', '/roles', 'person', 0);
 INSERT INTO `menu`
-VALUES (4, 0, 0, '用户中心', '', '/auth/**', '', 0);
+VALUES (null, 0, 1, '菜单管理', 'menus', '/menus', 'menu', 0);
+INSERT INTO `menu`
+VALUES (null, 0, 0, '用户中心', '', '/auth/**', '', 0);
 
 CREATE TABLE `role_menu`
 (

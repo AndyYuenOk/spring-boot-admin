@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class RoleVoter implements AccessDecisionVoter<Object> {
 
@@ -22,11 +23,14 @@ public class RoleVoter implements AccessDecisionVoter<Object> {
         }
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        if (authorities.contains("super-admin")) {
-            return ACCESS_DENIED;
+
+        for (GrantedAuthority authority : authorities) {
+            if (authority.getAuthority().equals("super-admin")) {
+                return ACCESS_GRANTED;
+            }
         }
 
-        int result = ACCESS_ABSTAIN;
+        int result = ACCESS_DENIED;
 
         for (ConfigAttribute attribute : attributes) {
             if (this.supports(attribute)) {
@@ -45,7 +49,7 @@ public class RoleVoter implements AccessDecisionVoter<Object> {
     }
 
     @Override
-    public boolean supports(Class clazz) {
+    public boolean supports(Class<?> clazz) {
         return true;
     }
 }

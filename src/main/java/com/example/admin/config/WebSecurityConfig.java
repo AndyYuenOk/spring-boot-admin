@@ -11,6 +11,7 @@ import com.example.admin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,10 +21,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -48,8 +51,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                 .csrf().disable()
+                .exceptionHandling(exceptionHandling -> {
+                    exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                })
                 .authorizeRequests()
-//                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .anyRequest().authenticated()
                 .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                     @Override
@@ -58,10 +63,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         return o;
                     }
                 })
-                .accessDecisionManager(new AffirmativeBased(Arrays.asList(new RoleVoter())))
+                .accessDecisionManager(new AffirmativeBased(Collections.singletonList(new RoleVoter())))
                 .and()
                 .addFilterAt(new JsonAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                .formLogin().failureHandler(new SimpleUrlAuthenticationFailureHandler());
+                .formLogin(formLogin -> {
+                    formLogin.failureHandler(new SimpleUrlAuthenticationFailureHandler("/erorr"));
+                });
 //                .and()
 //                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil))
 //                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository, roleRepository));
@@ -74,8 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        // 去除 ROLE_ 前缀
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
     }
 

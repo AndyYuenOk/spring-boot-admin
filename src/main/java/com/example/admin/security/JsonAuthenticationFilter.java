@@ -33,8 +33,9 @@ public class JsonAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         try {
             jsonObject = JsonParser.parseReader(request.getReader()).getAsJsonObject();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("请提交 JSON 数据");
         }
+
         return super.attemptAuthentication(request, response);
     }
 

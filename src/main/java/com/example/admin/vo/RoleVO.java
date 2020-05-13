@@ -1,7 +1,11 @@
 package com.example.admin.vo;
 
+import com.example.admin.entity.Role;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 public class RoleVO {
@@ -13,4 +17,6 @@ public class RoleVO {
 
     @ApiModelProperty("标识")
     private String authority;
+
+    private Set<MenuVO> menus;
 }
