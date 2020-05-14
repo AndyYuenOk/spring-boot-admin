@@ -122,6 +122,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hotels.beans</groupId>
+            <artifactId>bull-bean-transformer</artifactId>
+            <version>1.7.0-jdk8</version>
+        </dependency>
     </dependencies>
 
     <build>

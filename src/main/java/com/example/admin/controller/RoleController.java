@@ -6,6 +6,7 @@ import com.example.admin.entity.Role;
 import com.example.admin.repository.MenuRepository;
 import com.example.admin.repository.RoleRepository;
 import com.example.admin.service.RoleService;
+import com.example.admin.util.BeanCopyUtils;
 import com.example.admin.util.PaginationUtil;
 import com.example.admin.vo.RoleVO;
 import org.springframework.beans.BeanUtils;
@@ -40,16 +41,9 @@ public class RoleController {
 
     @PostMapping
     public RoleVO create(@Validated @RequestBody RoleDTO roleDTO) {
-        Role role = new Role();
-        BeanUtils.copyProperties(roleDTO, role);
-
+        Role role = BeanCopyUtils.copyBean(roleDTO, Role.class);
         setMenus(roleDTO, role);
-        System.out.println(role);
-
-        RoleVO roleVO = new RoleVO();
-        BeanUtils.copyProperties(roleService.create(role), roleVO);
-
-        return roleVO;
+        return BeanCopyUtils.copyBean(roleService.create(role), RoleVO.class);
     }
 
     @PutMapping("/{id}")
@@ -61,10 +55,7 @@ public class RoleController {
         BeanUtils.copyProperties(roleDTO, role);
         setMenus(roleDTO, role);
 
-        RoleVO roleVO = new RoleVO();
-        BeanUtils.copyProperties(roleRepository.save(role), roleVO);
-
-        return roleVO;
+        return BeanCopyUtils.copyBean(roleRepository.save(role), RoleVO.class);
     }
 
     @DeleteMapping("/{id}")

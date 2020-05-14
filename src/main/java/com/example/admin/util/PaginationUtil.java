@@ -1,7 +1,6 @@
 package com.example.admin.util;
 
 import com.example.admin.annotation.ColumnKey;
-import com.example.admin.vo.UserVO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import io.swagger.annotations.ApiModelProperty;

@@ -5,7 +5,7 @@ import com.example.admin.repository.MenuRepository;
 import com.example.admin.service.MenuService;
 import com.example.admin.util.PaginationUtil;
 import com.example.admin.vo.MenuVO;
-import org.springframework.beans.BeanUtils;
+import com.hotels.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/menus")
@@ -24,19 +25,20 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
 
+    private BeanUtils beanUtils = new BeanUtils();
+
     @GetMapping
     public ResponseEntity<?> index(Pageable pageable) {
         Page<Menu> page = menuRepository.findAllByOrderByIdDesc(pageable);
 
         Page<MenuVO> map = page.map(menu -> {
-            MenuVO menuVO = new MenuVO();
-            BeanUtils.copyProperties(menu, menuVO);
+            MenuVO menuVO = beanUtils.getTransformer().setDefaultValueForMissingField(true).transform(menu, MenuVO.class);
             if (!menu.getPid().equals(0L)) {
-                Menu menu1 = menuRepository.findById(menu.getPid()).orElse(null);
-                if (menu1 != null) {
+                Optional<Menu> menuOptional = menuRepository.findById(menu.getPid());
+                if (menuOptional.isPresent()) {
                     HashMap<String, Object> parent = new HashMap<>();
-                    parent.put("id", menu1.getId());
-                    parent.put("name", menu1.getName());
+                    parent.put("id", menuOptional.get().getId());
+                    parent.put("name", menuOptional.get().getName());
                     menuVO.setParent(parent);
                 }
             }
@@ -48,10 +50,7 @@ public class MenuController {
 
     @PostMapping
     public MenuVO create(@Valid @RequestBody Menu menu) {
-        System.out.println(menu);
-        MenuVO menusVO = new MenuVO();
-        BeanUtils.copyProperties(menuRepository.save(menu), menusVO);
-        return menusVO;
+        return beanUtils.getTransformer().transform(menuRepository.save(menu), MenuVO.class);
     }
 
     @PutMapping("/{id}")
